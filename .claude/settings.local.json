@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(super --version:*)",
+      "Bash(pip install:*)",
+      "Bash(python -m superoptix:*)",
+      "Bash(\"C:\\Users\\Jake\\AppData\\Roaming\\Python\\Python312\\Scripts\\super.exe\" --version)",
+      "Bash(chcp 65001:*)",
+      "Bash(nul)",
+      "Bash(PYTHONIOENCODING=utf-8 \"C:\\Users\\Jake\\AppData\\Roaming\\Python\\Python312\\Scripts\\super.exe\":*)",
+      "Bash(python:*)",
+      "Bash(gh:*)",
+      "Bash(git add:*)",
+      "Bash(.gitignore)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

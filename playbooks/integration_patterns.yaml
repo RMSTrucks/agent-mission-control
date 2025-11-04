@@ -1,0 +1,163 @@
+# Integration Patterns - Proven approaches for connecting systems
+# Living playbook for Agent Mission Control
+
+version: '1.0'
+playbook_type: integration_patterns
+description: Proven patterns for integrating external systems
+last_updated: '2025-11-04T00:00:00Z'
+
+entries:
+  - id: IP-001
+    pattern: "SuperOptiX CLI Wrapper"
+    description: "Wrap SuperOptiX CLI commands in Python for programmatic access"
+    use_case: "Execute SuperOptiX operations from backend API"
+    implementation: |
+      import subprocess
+      import json
+
+      def run_superoptix_command(cmd: str) -> dict:
+          result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+          if result.returncode != 0:
+              raise Exception(f"SuperOptiX error: {result.stderr}")
+          return json.loads(result.stdout)
+    confidence: 0.9
+    tags:
+      - superoptix
+      - cli-wrapper
+      - integration
+
+  - id: IP-002
+    pattern: "VAPI Webhook Handler"
+    description: "Process VAPI webhooks and respond appropriately"
+    use_case: "Handle real-time events from VAPI phone bots"
+    implementation: |
+      @app.post("/webhooks/vapi/{assistant_id}")
+      async def handle_vapi_webhook(assistant_id: str, payload: dict):
+          event_type = payload.get("type")
+          if event_type == "call.started":
+              # Handle call started
+          elif event_type == "call.ended":
+              # Handle call ended
+          return {"status": "ok"}
+    confidence: 0.85
+    tags:
+      - vapi
+      - webhooks
+      - integration
+
+  - id: IP-003
+    pattern: "Memory MCP Connector"
+    description: "Connect to MCP servers for memory access"
+    use_case: "Retrieve temporal memory and hybrid intelligence data"
+    implementation: |
+      from mcp import MCPClient
+
+      async def get_temporal_memory():
+          async with MCPClient("temporal-memory") as client:
+              memories = await client.call_tool("list_memories", {"tier": "all"})
+              return memories
+    confidence: 0.9
+    tags:
+      - memory
+      - mcp
+      - integration
+
+  - id: IP-004
+    pattern: "Long-Running Task with Celery"
+    description: "Queue optimization tasks that take 5-30 minutes"
+    use_case: "Run GEPA optimization without blocking API"
+    implementation: |
+      from celery import Celery
+
+      @celery.task
+      def optimize_agent_task(agent_id: str, params: dict):
+          # Run optimization
+          result = superoptix_client.optimize(agent_id, **params)
+          # Store results in database
+          save_optimization_results(agent_id, result)
+          return result
+    confidence: 0.95
+    tags:
+      - celery
+      - async
+      - optimization
+
+  - id: IP-005
+    pattern: "WebSocket Progress Streaming"
+    description: "Stream real-time progress updates to frontend"
+    use_case: "Show optimization progress as it happens"
+    implementation: |
+      @app.websocket("/ws/optimize/{agent_id}")
+      async def optimize_websocket(websocket: WebSocket, agent_id: str):
+          await websocket.accept()
+          async for progress in optimization_stream(agent_id):
+              await websocket.send_json({"progress": progress})
+    confidence: 0.85
+    tags:
+      - websocket
+      - real-time
+      - progress
+
+  - id: IP-006
+    pattern: "Configuration from Environment"
+    description: "Load sensitive config from environment variables"
+    use_case: "Keep API keys out of version control"
+    implementation: |
+      from pydantic_settings import BaseSettings
+
+      class Settings(BaseSettings):
+          vapi_api_key: str
+          close_api_key: str
+
+          class Config:
+              env_file = ".env"
+    confidence: 1.0
+    tags:
+      - security
+      - configuration
+      - environment
+
+  - id: IP-007
+    pattern: "Graceful External System Failure"
+    description: "Degrade gracefully when external systems are unavailable"
+    use_case: "Continue working if Screenpipe or Close are down"
+    implementation: |
+      try:
+          screenpipe_health = await screenpipe_client.health_check()
+      except Exception as e:
+          logger.warning(f"Screenpipe unavailable: {e}")
+          screenpipe_health = {"status": "unavailable"}
+    confidence: 0.9
+    tags:
+      - error-handling
+      - resilience
+      - integration
+
+  - id: IP-008
+    pattern: "Database Session Management"
+    description: "Properly manage database sessions with FastAPI"
+    use_case: "Prevent connection leaks and deadlocks"
+    implementation: |
+      from sqlalchemy.orm import Session
+
+      def get_db():
+          db = SessionLocal()
+          try:
+              yield db
+          finally:
+              db.close()
+
+      @app.get("/api/agents")
+      def list_agents(db: Session = Depends(get_db)):
+          return db.query(Agent).all()
+    confidence: 0.95
+    tags:
+      - database
+      - fastapi
+      - session-management
+
+notes: |
+  These patterns are proven approaches for integrating the various systems in
+  Agent Mission Control. They should be applied consistently across all integrations.
+
+  Add new patterns as they're discovered and validated through use.

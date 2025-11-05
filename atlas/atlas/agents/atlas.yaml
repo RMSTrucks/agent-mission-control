@@ -1,0 +1,60 @@
+# ATLAS - Agent Testing Lab & System
+# Minimal test agent for learning SuperOptiX incrementally
+
+name: atlas
+version: 0.1.0
+description: |
+  ATLAS is a minimal test agent for learning SuperOptiX.
+  Starting with a blank slate, we'll incrementally add:
+  - Memory systems
+  - Knowledge bases
+  - Tools and functions
+  - VAPI integration
+
+# Model Configuration
+model:
+  provider: openai
+  name: gpt-4
+  temperature: 0.7
+  max_tokens: 2000
+
+# System Prompt - Simple and minimal for now
+system_prompt: |
+  You are ATLAS, a test assistant.
+
+  Your purpose is to help test and validate AI agent capabilities.
+  Be helpful, concise, and clear in your responses.
+
+# Conversation Settings
+conversation:
+  max_context_length: 10
+  greeting: "Hello! I'm ATLAS, your test assistant. How can I help you today?"
+
+# Memory - Empty for now (Step 3)
+memory:
+  enabled: false
+  # Will add Temporal Memory and Hybrid Intelligence later
+
+# Knowledge - Empty for now (Step 4)
+knowledge:
+  enabled: false
+  # Will add knowledge bases later
+
+# Tools - Empty for now (Step 6)
+tools: []
+
+# Observability - Basic logging (Step 2)
+observability:
+  logging:
+    enabled: true
+    level: info
+  tracing:
+    enabled: false
+    # Will enable tracing later
+
+# Metadata
+metadata:
+  created: 2025-11-04
+  stage: "step-1-minimal"
+  author: "Jake + Claude 3.0"
+  purpose: "Learning SuperOptiX incrementally"

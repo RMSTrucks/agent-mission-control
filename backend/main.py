@@ -19,7 +19,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from backend.core import settings
-from backend.api import agents_router, tests_router, optimize_router, vapi_router
+from backend.api import agents_router, tests_router, optimize_router, vapi_router, memory_router
 from backend.models import (
     HealthResponse,
     SystemStatusResponse,
@@ -170,6 +170,7 @@ app.include_router(agents_router, prefix="/api")
 app.include_router(tests_router, prefix="/api")
 app.include_router(optimize_router, prefix="/api")
 app.include_router(vapi_router, prefix="/api")
+app.include_router(memory_router, prefix="/api")
 
 # ========================================================================
 # Startup & Shutdown Events
@@ -193,6 +194,14 @@ async def startup_event():
         print("SUCCESS: VAPI is connected")
     else:
         print("WARNING: VAPI is not configured (set VAPI_API_KEY environment variable)")
+
+    # Initialize Memory Manager
+    try:
+        from memory import get_memory_manager
+        memory_mgr = get_memory_manager()
+        print("SUCCESS: Memory Manager initialized")
+    except Exception as e:
+        print(f"WARNING: Memory Manager initialization failed: {e}")
 
     # TODO: Initialize database
     # TODO: Connect to Redis (for Celery)

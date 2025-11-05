@@ -19,7 +19,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from backend.core import settings
-from backend.api import agents_router, tests_router, optimize_router
+from backend.api import agents_router, tests_router, optimize_router, vapi_router
 from backend.models import (
     HealthResponse,
     SystemStatusResponse,
@@ -27,6 +27,7 @@ from backend.models import (
     ErrorResponse
 )
 from integrations.superoptix_client import check_superoptix_installed
+from integrations.vapi_client import check_vapi_available
 
 # ========================================================================
 # FastAPI Application
@@ -168,6 +169,7 @@ async def get_system_metrics():
 app.include_router(agents_router, prefix="/api")
 app.include_router(tests_router, prefix="/api")
 app.include_router(optimize_router, prefix="/api")
+app.include_router(vapi_router, prefix="/api")
 
 # ========================================================================
 # Startup & Shutdown Events
@@ -186,9 +188,15 @@ async def startup_event():
     else:
         print("WARNING: SuperOptiX is not installed or not working")
 
+    # Check VAPI availability
+    if check_vapi_available():
+        print("SUCCESS: VAPI is connected")
+    else:
+        print("WARNING: VAPI is not configured (set VAPI_API_KEY environment variable)")
+
     # TODO: Initialize database
     # TODO: Connect to Redis (for Celery)
-    # TODO: Check external API connections (VAPI, Close)
+    # TODO: Check Close CRM connection
 
 
 @app.on_event("shutdown")
